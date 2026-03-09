@@ -117,7 +117,7 @@ public:
   void initPlot( double deltaf, double amplitude, double duration, double eodf,
 		 const MapD &eodfrequency, const EventData &fishchirps,
 		 bool showstimulus, const MapD &stimfrequency, const EventData &chirptimes );
-  void save( double deltaf, float eodmult, double amplitude, double duration, double pause,
+  void save( double deltaf, float eodmult, double amplitude, double contrast, double duration, double pause,
 	     int amtype, const vector<double> &amampls, const vector<double> &amfreqs,
 	     double fishrate, double stimulusrate, int nfft, double eodfreqprec,
 	     const MapD eodfrequencies[], const MapD eodamplitudes[], const MapD &eodfrequency,

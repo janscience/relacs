@@ -45,7 +45,9 @@ Beats::Beats( void )
   addSelection( "deltafshuffle", "Order of delta f's", RangeLoop::sequenceStrings() );
   addNumber( "eodmult", "EOD multiples", 1, 0, 100, 0.1 );
   addBoolean( "fixeddf", "Keep delta f fixed", false );
-  addNumber( "amplitude", "Amplitude", 1.0, 0.0, 1000.0, 0.1, "mV/cm" );
+  addSelection( "amplsel", "Stimulus amplitude", "contrast|absolute" );
+  addNumber( "contrast", "Contrast", 0.1, 0.0, 1.0, 0.01, "", "%" ).setActivation( "amplsel", "contrast" );
+  addNumber( "amplitude", "Amplitude", 1.0, 0.0, 1000.0, 0.1, "mV/cm" ).setActivation( "amplsel", "absolute" );
   addSelection( "amtype", "Amplitude modulation of signal", "none|sine|rectangular" );
   addText( "amfreq", "Frequencies of amplitude modulation", "1" ).setUnit( "Hz" ).setActivation( "amtype", "none", false );
   addText( "amamplitude", "Corresponding amplitudes", "100" ).setUnit( "%" ).setActivation( "amtype", "none", false );
@@ -96,6 +98,8 @@ int Beats::main( void )
   double duration = number( "duration" );
   double pause = number( "pause" );
   double ramp = number( "ramp" );
+  bool usecontrast = ( index( "amplsel" ) == 0 );
+  double contrast = number( "contrast" );
   double amplitude = number( "amplitude" );
   int amtype = index( "amtype" );
   vector< double > amfreqs;
@@ -367,6 +371,19 @@ int Beats::main( void )
 	return Failed;
       }
 
+      // stimulus contrast:
+      if ( usecontrast ) {
+	if ( LocalEODTrace[0] < 0 ) {
+	  warning( "No local EOD recording available for setting stimulus contrast!" );
+	  return Failed;
+	}
+	double fishampl = eodAmplitude( trace( LocalEODTrace[0] ),
+					currentTime() - averagetime, currentTime() );
+	amplitude = contrast * fishampl;
+      }
+      else
+	contrast = 0.0;
+
       double deltaf = *dfrange;
 
       setSaving( true );
@@ -401,11 +418,15 @@ int Beats::main( void )
 
         sig.description().addNumber( "DeltaF", deltaf, "Hz" );
         sig.description().addNumber( "Amplitude", amplitude, "mV" );
+	if ( usecontrast )
+	  sig.description().addNumber( "Contrast", 100*contrast, "%" );
         sig.description().addNumber( "Duration", duration, "s" );
         if ( settings().flags( "deltafrange", OutData::Mutable ) )
           sig.description()["DeltaF"].addFlags( OutData::Mutable );
         if ( settings().flags( "Amplitude", OutData::Mutable ) )
           sig.description()["Amplitude"].addFlags( OutData::Mutable );
+        if ( settings().flags( "Contrast", OutData::Mutable ) )
+          sig.description()["Contrast"].addFlags( OutData::Mutable );
         sig.setIdent( name );
 
         signal.push( sig );
@@ -519,6 +540,8 @@ int Beats::main( void )
 	  Parameter &p1 = sig.description().addNumber( "Frequency", stimulusrate, "Hz" );
 	  Parameter &p2 = sig.description().addNumber( "DeltaF", deltaf, "Hz" );
 	  sig.description().addNumber( "Amplitude", amplitude, "mV" );
+	  if ( usecontrast )
+	    sig.description().addNumber( "Contrast", 100*contrast, "%" );
 	  sig.description().addNumber( "TemporalOffset", 0.0, "s" );
 	  sig.description().addNumber( "Duration", duration, "s" );
 	  sig.description().append( chirpheader );
@@ -556,6 +579,8 @@ int Beats::main( void )
 	    sig.setIntensity( amplitude );
 	    sig.description().setNumber( "Amplitude", amplitude );
 	    sig.description().setUnit( "Amplitude", "mV" );
+	    if ( usecontrast )
+	      sig.description().addNumber( "Contrast", 100*contrast, "%" );
 	    if ( dfrange.size() > 1 )
 	      sig.setMutable( "Frequency" );
 	  }
@@ -677,7 +702,10 @@ int Beats::main( void )
 	s += "  @ EOD multiple: <b>" + Str( eodmult, "%.2f" ) + "</b>";
 	s += "  (=<b>" + Str( stimulusrate, "%.1f" ) + "Hz)</b>";
       }
-      s += "  Amplitude: <b>" + Str( amplitude, "%g" ) + "mV/cm</b>";
+      if ( usecontrast )
+	s += "  Contrast: <b>" + Str( 100*contrast, "%g" ) + "%</b>";
+      else
+	s += "  Amplitude: <b>" + Str( amplitude, "%g" ) + "mV/cm</b>";
       if ( amtype > 0 ) {
 	s += "  <b>";
 	if ( amtype == 2 )
@@ -825,7 +853,7 @@ int Beats::main( void )
       else
 	fishchirps.clear();
       P.draw();
-      save( deltaf, eodmult, amplitude, duration, pause, amtype, amampls, amfreqs,
+      save( deltaf, eodmult, amplitude, contrast, duration, pause, amtype, amampls, amfreqs,
 	    fishrate, stimulusrate, nfft, eodfreqprec,
 	    eodfrequencies, eodamplitudes, eodfrequency, fishchirps, playedchirptimes,
 	    stimfrequency, chirpheader, split, FileCount );
@@ -969,7 +997,7 @@ void Beats::initPlot( double deltaf, double amplitude, double duration, double e
 }
 
 
-void Beats::save( double deltaf, float eodmult, double amplitude, double duration, double pause,
+void Beats::save( double deltaf, float eodmult, double amplitude, double contrast, double duration, double pause,
 		  int amtype, const vector<double> &amampls, const vector<double> &amfreqs,
 		  double fishrate, double stimulusrate, int nfft, double eodfreqprec,
 		  const MapD eodfrequencies[], const MapD eodamplitudes[], const MapD &eodfrequency, 
@@ -983,6 +1011,8 @@ void Beats::save( double deltaf, float eodmult, double amplitude, double duratio
   header.addNumber( "StimulusFrequency", stimulusrate, "Hz", "%.1f" );
   header.addNumber( "EODMultiple", eodmult, "", "%.3f" );
   header.addNumber( "Amplitude", amplitude, "mV/cm", "%.3f" );
+  if ( contrast > 0.0 )
+    header.addNumber( "Contrast", 100*contrast, "%", "%.1f" );
   if ( amtype > 0 ) {
     header.addText( "AMType", amtype == 2? "Rectangular" : "Sine" );
     Str fs = Str( amfreqs[0], "%g" );
