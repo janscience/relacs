@@ -43,11 +43,12 @@ Beats::Beats( void )
   addNumber( "ramp", "Duration of linear ramp", 0.5, 0, 10000.0, 0.1, "seconds" );
   addText( "deltafrange", "Range of delta f's", "10" ).setUnit( "Hz" );
   addSelection( "deltafshuffle", "Order of delta f's", RangeLoop::sequenceStrings() );
-  addNumber( "eodmult", "EOD multiples", 1, 0, 100, 0.1 );
+  addNumber( "eodmult", "EOD multiples", 1., 0., 100., 0.1 );
   addBoolean( "fixeddf", "Keep delta f fixed", false );
   addSelection( "amplsel", "Stimulus amplitude", "contrast|absolute" );
   addNumber( "contrast", "Contrast", 0.1, 0.0, 1.0, 0.01, "", "%" ).setActivation( "amplsel", "contrast" );
   addNumber( "amplitude", "Amplitude", 1.0, 0.0, 1000.0, 0.1, "mV/cm" ).setActivation( "amplsel", "absolute" );
+  addNumber( "offset", "Offset", 0.0, -5.0, 5.0, 0.1, "mV/cm" ).setActivation( "amplsel", "absolute" );
   addSelection( "amtype", "Amplitude modulation of signal", "none|sine|rectangular" );
   addText( "amfreq", "Frequencies of amplitude modulation", "1" ).setUnit( "Hz" ).setActivation( "amtype", "none", false );
   addText( "amamplitude", "Corresponding amplitudes", "100" ).setUnit( "%" ).setActivation( "amtype", "none", false );
@@ -101,6 +102,7 @@ int Beats::main( void )
   bool usecontrast = ( index( "amplsel" ) == 0 );
   double contrast = number( "contrast" );
   double amplitude = number( "amplitude" );
+  double offset = number( "offset" );
   int amtype = index( "amtype" );
   vector< double > amfreqs;
   vector< double > amampls;
@@ -574,15 +576,20 @@ int Beats::main( void )
 	  if ( n < 1 )
 	    n = 1;
 	  if ( amtype == 0 ) {
-	    sig.sineWave( n*p, -1.0, stimulusrate, 0.0, 1.0, ramp );
+	    sig.sineWave( n*p, -1.0, stimulusrate, 0.0, amplitude / ( std::abs( offset ) + amplitude ), ramp );
+	    sig += (offset / ( std::abs( offset ) + amplitude ));
+	    if ( dfrange.size() > 1 )
+	      sig.setMutable( "Frequency" );
 	    sig.setIdent( "sinewave" );
-	    sig.setIntensity( amplitude );
+	    sig.setIntensity( amplitude + std::abs(offset) );
 	    sig.description().setNumber( "Amplitude", amplitude );
 	    sig.description().setUnit( "Amplitude", "mV" );
 	    if ( usecontrast )
 	      sig.description().addNumber( "Contrast", 100*contrast, "%" );
 	    if ( dfrange.size() > 1 )
 	      sig.setMutable( "Frequency" );
+	    sig.description().addNumber( "Offset", offset );
+	    sig.description().setUnit( "Offset", "mV/cm" );
 	  }
 	  else {
 	    OutData am;
