@@ -26,7 +26,7 @@
 #include <QPixmap>
 #include <QLabel>
 #include <QPushButton>
-#include <QDateTime>
+#include <QElapsedTimer>
 #include <QTimer>
 #include <relacs/optwidget.h>
 #include <relacs/configclass.h>
@@ -193,7 +193,7 @@ private:
   bool StartFind;
   QPushButton *FindButton;
   QTimer *T;
-  QTime LastStep;
+  QElapsedTimer LastStep;
 
 
 private slots:

@@ -21,7 +21,6 @@
 
 #include <cstdlib>
 #include <cmath>
-#include <QDateTime>
 #include <QToolTip>
 #include <QShortcut>
 #include <relacs/str.h>

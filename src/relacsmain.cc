@@ -139,7 +139,7 @@ int main( int argc, char **argv )
     }
   }
 
-  QApplication::setColorSpec( QApplication::CustomColor );
+  // deprecated: QApplication::setColorSpec( QApplication::CustomColor );
   QApplication app( argc, argv );
   
   QPixmap pixmap( string( iconpath + "/relacssplash.png" ).c_str() );

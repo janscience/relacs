@@ -25,7 +25,7 @@
 #include <QWidget>
 #include <QPushButton>
 #include <QMenu>
-#include <QTime>
+#include <QElapsedTimer>
 #include <QTimer>
 #include <deque>
 #include <relacs/relacsplugin.h>
@@ -224,7 +224,7 @@ private:
   bool Manual;
 
   int CenterMode;
-  QTime CenterTime;
+  QElapsedTimer CenterTime;
 
   bool Plotting;
 

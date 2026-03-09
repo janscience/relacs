@@ -22,9 +22,9 @@
 #ifndef _RELACS_EPHYS_THRESHOLDSUSPIKEDETECTOR_H_
 #define _RELACS_EPHYS_THRESHOLDSUSPIKEDETECTOR_H_ 1
 
-#include <qpixmap.h>
-#include <qlabel.h>
-#include <qdatetime.h>
+#include <QPixmap>
+#include <QLabel>
+#include <QElapsedTimer>
 #include <relacs/optwidget.h>
 #include <relacs/cyclicarray.h>
 #include <relacs/sampledata.h>
@@ -171,7 +171,7 @@ public slots:
   CyclicArrayD SpikeSymmetry;
   CyclicArrayD SpikeWidth;
   CyclicArray<bool> SpikeAccepted;
-  QTime Update;
+  QElapsedTimer Update;
   Plot *SP;
   Plot *PP1;
   Plot *PP2;

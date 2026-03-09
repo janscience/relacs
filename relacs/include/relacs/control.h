@@ -24,7 +24,7 @@
 
 #include <string>
 #include <values.h>
-#include <QDateTime>
+#include <QElapsedTimer>
 #include <QMenu>
 #include <QThread>
 #include <QWaitCondition>
@@ -257,7 +257,7 @@ private:
   bool Interrupt;
   mutable QMutex InterruptLock;
   QWaitCondition SleepWait;
-  QTime SleepTime;
+  QElapsedTimer SleepTime;
 
 };
 

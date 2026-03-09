@@ -20,7 +20,7 @@
 */
 
 #include <QGridLayout>
-#include <QTime>
+#include <QElapsedTimer>
 #include <QProcess>
 #include <relacs/ephys/iontophoresis.h>
 using namespace relacs;
@@ -167,7 +167,7 @@ int Iontophoresis::main( void )
 
   double totalpos = 0.0;
   double totalneg = 0.0;
-  QTime calltime;
+  QElapsedTimer calltime;
   calltime.start();
 
   // write stimulus:
@@ -203,7 +203,7 @@ int Iontophoresis::main( void )
     if ( fortunes &&
 	 calltime.elapsed() > (int)::rint( 1000.0*fortuneperiod ) ) {
       QProcess p;
-      p.start( "fortune" );
+      p.start( "fortune", {}, QProcess::ReadWrite );
       p.waitForFinished( -1 );
       QString text = p.readAllStandardOutput();
       QCoreApplication::postEvent( this, new IontophoresisEvent( text ) );

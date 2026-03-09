@@ -128,7 +128,6 @@ namespace photoreceptors {
 					      double ramp, double cycleramp, double pulse_duration, 
 					      double duty_cycle, double frequency, int seed, double amplitude ) {
     string wavename;
-    bool store = false;
     Options header;
     double peak_amplitude_factor = 0.0;
     signal.clear();

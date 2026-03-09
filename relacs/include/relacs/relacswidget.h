@@ -27,7 +27,7 @@
 #include <QMenu>
 #include <QAction>
 #include <QString>
-#include <QDateTime>
+#include <QElapsedTimer>
 #include <QTimer>
 #include <QThread>
 #include <QMutex>
@@ -424,7 +424,7 @@ private:
     /*! Controls the derived data of the primary input data buffer. */
   QReadWriteLock DerivedDataMutex;
   bool WriteFlag;
-  QTime DataTime;
+  QElapsedTimer DataTime;
 
   // Research Program = RePros:
   RePro *CurrentRePro;      // always the current program
@@ -446,7 +446,7 @@ private:
   QWaitCondition SessionStopWait;
   QWaitCondition SessionPrestopWait;
 
-  QTime ReProTime;
+  QElapsedTimer ReProTime;
 
   QAction *AcquisitionAction;
   QAction *SimulationAction;

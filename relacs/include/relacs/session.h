@@ -26,7 +26,7 @@
 #include <string>
 #include <QWidget>
 #include <QLabel>
-#include <QDateTime>
+#include <QElapsedTimer>
 #include <QTimer>
 #include <QLabel>
 #include <QMenu>
@@ -159,11 +159,11 @@ private:
   time_t StartSessionTime;
 
     /*! Measures the elapsed time of the current session. */
-  mutable QTime SessionTimer;
+  mutable QElapsedTimer SessionTimer;
     /*! Stores the elapsed time of the current session. */
   mutable double SessionSeconds;
     /*! Measures the totally elapsed time since starting the program. */
-  mutable QTime TotalTimer;
+  mutable QElapsedTimer TotalTimer;
 
   QTimer *MessageTimer;
 

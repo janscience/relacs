@@ -19,7 +19,7 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <QDateTime>
+#include <QElapsedTimer>
 #include <QVBoxLayout>
 #include <relacs/sampledata.h>
 #include <relacs/stats.h>
@@ -193,7 +193,7 @@ void SpectrumAnalyzer::main( void )
       if ( Origin > 0 )
 	waitOnReProSleep();
       else {
-	QTime time;
+	QElapsedTimer time;
 	time.start();
 	do {
 	  waitOnData();
@@ -231,7 +231,7 @@ void SpectrumAnalyzer::main( void )
     if ( Origin > 0 )
       waitOnReProSleep();
     else {
-      QTime time;
+      QElapsedTimer time;
       time.start();
       do {
 	waitOnData();

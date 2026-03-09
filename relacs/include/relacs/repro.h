@@ -26,7 +26,7 @@
 #include <QMutex>
 #include <QWaitCondition>
 #include <QThread>
-#include <QDateTime>
+#include <QElapsedTimer>
 #include <relacs/outlist.h>
 #include <relacs/optdialog.h>
 #include <relacs/relacsplugin.h>
@@ -565,7 +565,7 @@ private:
   int Interrupt;   // 0: no interruption, 1: stop write, 2: interrupt repro
   mutable QMutex InterruptLock;
   QWaitCondition SleepWait;
-  QTime SleepTime;
+  QElapsedTimer SleepTime;
   double TraceTime;
 
   int LastState;
@@ -588,7 +588,7 @@ private:
 
   bool PrintMessage;
 
-  mutable QTime ReProTime;
+  mutable QElapsedTimer ReProTime;
 
 
 private slots:

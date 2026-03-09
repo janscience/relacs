@@ -30,7 +30,7 @@
 #include <QSemaphore>
 #include <QWaitCondition>
 #include <QThread>
-#include <QDateTime>
+#include <QElapsedTimer>
 #include <relacs/inlist.h>
 #include <relacs/outdata.h>
 #include <relacs/analoginput.h>
@@ -207,7 +207,7 @@ private:
   int MaxPush;
   double MaxPushTime;
   int PushCount;
-  QTime SimTime;
+  QElapsedTimer SimTime;
   double AveragedLoad;
   double AverageRatio;
 

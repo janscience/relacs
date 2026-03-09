@@ -156,7 +156,6 @@ void AudioMonitor::start( void )
   if ( ! initialized )
     return;
 
-  int nbuffer = 256;
   Trace = 0;
   RateFac = 1.0;
   DataIndex = -1;
@@ -166,6 +165,8 @@ void AudioMonitor::start( void )
     PrevMute = 0.0;
 
 #ifdef HAVE_LIBPORTAUDIO
+  
+  int nbuffer = 256;
 
   // open default stream for output:
   int audiodev = AudioDevice;

@@ -19,7 +19,7 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <QDateTime>
+#include <QElapsedTimer>
 #include <QVBoxLayout>
 #include <relacs/acoustic/soundlevel.h>
 using namespace relacs;
@@ -123,7 +123,7 @@ void SoundLevel::main( void )
     if ( Origin > 0 )
       waitOnReProSleep();
     else {
-      QTime time;
+      QElapsedTimer time;
       time.start();
       do {
 	waitOnData();
